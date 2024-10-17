@@ -1,10 +1,11 @@
 import smtplib
-from flask import Flask, request, render_template, redirect,url_for
+from flask import Flask, request, render_template, redirect, url_for
 from email.message import EmailMessage
 from datetime import datetime
 import threading
 import time
 from pymongo import MongoClient
+import os
 
 app = Flask(__name__)
 
@@ -17,8 +18,8 @@ reminders_collection = db.reminders  # Name of your collection
 # Email configuration
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-GMAIL_USERNAME = "ruwaidhafarook@gmail.com"  # Replace with your email
-GMAIL_PASSWORD = "ylkhveogvljrjsnx"  # Replace with your app password or email password
+GMAIL_USERNAME = os.environ.get("GMAIL_USERNAME")  # Use environment variable
+GMAIL_PASSWORD = os.environ.get("GMAIL_PASSWORD")  # Use environment variable
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -83,4 +84,4 @@ def check_reminders():
 if __name__ == '__main__':
     # Start the background thread to check for reminders
     threading.Thread(target=check_reminders, daemon=True).start()
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
